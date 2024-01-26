@@ -14,7 +14,8 @@ using testWabApi1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IBookRepository, BookRepository>(); 
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors();
@@ -51,7 +52,7 @@ builder.Services.AddDbContext<LibraryDbContext>(options =>
 
 builder.Services.AddIdentityCore<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
         .AddEntityFrameworkStores<LibraryDbContext>();
-builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = true;

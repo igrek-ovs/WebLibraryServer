@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using testWabApi1.DTO;
 using testWabApi1.Models;
 using testWabApi1.Services;
 
@@ -37,10 +38,31 @@ namespace testWabApi1.Controllers
             if(await _authService.Login(loginUser))
             {
                 var tokenString = _authService.GenerateTokenString(loginUser);
-
-                return Ok(tokenString);
+                var refreshToken = _authService.GenerateRefreshToken(loginUser);
+                var tokensResponse = new TokensResponse
+                {
+                    AccessToken = tokenString,
+                    RefreshToken = refreshToken
+                };
+                return Ok(tokensResponse);
             }
             return BadRequest();
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh(RefreshTokenDto refreshToken)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var response = _authService.RefreshAccessToken(refreshToken);
+
+            if ( response !=null)
+            {
+                return Ok(response);
+            }
+            return Unauthorized("Go and authorize one more time");
         }
     }
 }
