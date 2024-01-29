@@ -41,7 +41,7 @@ namespace testWabApi1.Services
 
             var securityToken = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.Now.AddMinutes(5),
                 issuer: _config.GetSection("Jwt:Issuer").Value,
                 audience: _config.GetSection("Jwt:Audience").Value,
                 signingCredentials: signinCred
@@ -68,11 +68,12 @@ namespace testWabApi1.Services
             var refreshToken = new RefreshToken
             {
                 Token = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.Now.AddDays(10),
+                Expires = DateTime.Now.AddMonths(1),
                 Created = DateTime.Now,
                 UserId = identityUser.Result.Id
             };
 
+            _refreshTokenManager.RemoveRefreshToken(refreshToken.UserId);
             _refreshTokenManager.AddRefreshToken(refreshToken);
 
             return refreshToken;
