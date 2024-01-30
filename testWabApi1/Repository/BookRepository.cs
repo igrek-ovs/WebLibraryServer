@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Net;
 using testWabApi1.Data;
 using testWabApi1.DTO;
 using testWabApi1.Interfaces;
@@ -11,12 +10,12 @@ namespace testWabApi1.Repository
     {
 
         private readonly LibraryDbContext _libraryDbContext;
-        public BookRepository(LibraryDbContext context) 
+        public BookRepository(LibraryDbContext context)
         {
             _libraryDbContext = context;
         }
 
-        public ICollection<BookDto> GetBooks() 
+        public ICollection<BookDto> GetBooks()
         {
             var books = _libraryDbContext.Books
         .Include(b => b.Author)
@@ -34,7 +33,7 @@ namespace testWabApi1.Repository
             return books;
         }
 
-        public bool CreateBook(Book book) 
+        public bool CreateBook(Book book)
         {
             _libraryDbContext.Add(book);
             return Save();
@@ -84,7 +83,7 @@ namespace testWabApi1.Repository
 
         public ICollection<BookDto> GetBooksOnPage(int page)
         {
-            int pageSize = 3; 
+            int pageSize = 3;
 
             var books = _libraryDbContext.Books
                 .Include(b => b.Author)

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using testWabApi1.Interfaces;
 using testWabApi1.Models;
@@ -87,7 +86,7 @@ namespace testWabApi1.Controllers
                 ModelState.AddModelError("", "Smth went wrong");
                 return StatusCode(500, ModelState);
             }
-            
+
             return Ok(bookCreate);
         }
 

@@ -19,23 +19,23 @@ namespace testWabApi1.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(LoginUser loginUser)
         {
-            if(await _authService.RegisterUser(loginUser))
+            if (await _authService.RegisterUser(loginUser))
             {
                 return Ok("Registered");
             }
             return BadRequest("Smth went wrong during registration");
-            
+
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginUser loginUser)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if(await _authService.Login(loginUser))
+            if (await _authService.Login(loginUser))
             {
                 var tokenString = _authService.GenerateTokenString(loginUser);
                 var refreshToken = _authService.GenerateRefreshToken(loginUser);
@@ -58,7 +58,7 @@ namespace testWabApi1.Controllers
             }
             var response = _authService.RefreshAccessToken(refreshToken);
 
-            if ( response !=null)
+            if (response != null)
             {
                 return Ok(response);
             }

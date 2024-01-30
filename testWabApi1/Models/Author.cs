@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
-
-namespace testWabApi1.Models
+﻿namespace testWabApi1.Models
 {
     public class Author
     {
