@@ -105,5 +105,16 @@ namespace testWabApi1.Repository
         {
             return _libraryDbContext.Books.Count();
         }
+
+        public void UpdateImagePath(int bookId, string imagePath)
+        {
+            var book = _libraryDbContext.Books.FirstOrDefault(b => b.Id == bookId);
+
+            if (book != null)
+            {
+                book.ImagePath = imagePath;
+                _libraryDbContext.SaveChanges();
+            }
+        }
     }
 }

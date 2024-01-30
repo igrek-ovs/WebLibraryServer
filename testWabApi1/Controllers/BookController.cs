@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using testWabApi1.Interfaces;
 using testWabApi1.Models;
+using testWabApi1.Services;
 
 namespace testWabApi1.Controllers
 {
@@ -12,10 +13,12 @@ namespace testWabApi1.Controllers
     public class BookController : Controller
     {
         private readonly IBookRepository bookRepository;
+        private readonly IBlobService _blobService;
 
-        public BookController(IBookRepository bookRepository)
+        public BookController(IBookRepository bookRepository, IBlobService blobService)
         {
             this.bookRepository = bookRepository;
+            _blobService = blobService;
         }
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Book>))]
@@ -56,6 +59,7 @@ namespace testWabApi1.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
+        [Consumes("multipart/form-data")]
         public IActionResult CreateBook([FromBody] Book bookCreate)
         {
             if (bookCreate == null)
@@ -78,15 +82,28 @@ namespace testWabApi1.Controllers
                 return BadRequest(ModelState);
             }
 
+
             if (!bookRepository.CreateBook(bookCreate))
             {
                 ModelState.AddModelError("", "Smth went wrong");
                 return StatusCode(500, ModelState);
-
             }
-            return Ok("Created");
-
+            
+            return Ok(bookCreate);
         }
+
+        [HttpPost("upload-image")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            var imgPath = await _blobService.UploadBlobAsync(file);
+            // bookRepository.UpdateImagePath(bookCreate.Id, imgPath.ToString());
+            return Ok(imgPath);
+        }
+
+
 
 
         [HttpPut("{bookId}")]

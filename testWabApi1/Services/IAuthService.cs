@@ -4,7 +4,7 @@ using testWabApi1.Models;
 
 namespace testWabApi1.Services
 {
-    public interface IAuthService
+    public interface IAuthService 
     {
         Task<bool> RegisterUser(LoginUser loginUser);
         Task<bool> Login(LoginUser loginUser);

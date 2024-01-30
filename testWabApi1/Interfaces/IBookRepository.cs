@@ -13,5 +13,6 @@ namespace testWabApi1.Interfaces
         int CalculateBooks();
         Book GetBook(int id);
         bool Save();
+        void UpdateImagePath(int bookId, string imagePath);
     }
 }
