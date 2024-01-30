@@ -14,7 +14,7 @@ namespace testWabApi1.Services
             _containerName = configuration["BlobStorage:ContainerName"];
         }
 
-        public async Task<string> UploadBlobAsync(/*int bookId,*/ IFormFile file)
+        public async Task<string> UploadBlobAsync(IFormFile file)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
 
@@ -23,7 +23,6 @@ namespace testWabApi1.Services
                 containerClient.Create();
             }
 
-            //var uniqueFileName = $"{bookId}.png";
             var uniqueFileName = $"{Guid.NewGuid()}{file.FileName}";
             var blobClient = containerClient.GetBlobClient(uniqueFileName);
 
@@ -38,8 +37,6 @@ namespace testWabApi1.Services
         public void DeleteBlobAsync(int bookId)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
-
-            
 
             var fileName = $"{bookId}.png";
 

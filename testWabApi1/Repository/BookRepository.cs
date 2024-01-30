@@ -26,7 +26,8 @@ namespace testWabApi1.Repository
             Title = b.Title,
             Genre = b.Genre,
             AuthorId = b.AuthorId,
-            AuthorName = b.Author != null ? b.Author.Name : "Unknown Author"
+            AuthorName = b.Author != null ? b.Author.Name : "Unknown Author",
+            ImagePath = b.ImagePath != null ? b.ImagePath : "No image"
         })
         .ToList();
 
@@ -63,6 +64,7 @@ namespace testWabApi1.Repository
             }
             existingBook.Title = book.Title;
             existingBook.Genre = book.Genre;
+            existingBook.ImagePath = book.ImagePath;
             return Save();
         }
         public bool DeleteBook(Book book)
@@ -94,7 +96,8 @@ namespace testWabApi1.Repository
                     Title = b.Title,
                     Genre = b.Genre,
                     AuthorId = b.AuthorId,
-                    AuthorName = b.Author != null ? b.Author.Name : "Unknown Author"
+                    AuthorName = b.Author != null ? b.Author.Name : "Unknown Author",
+                    ImagePath = b.ImagePath != null ? b.ImagePath : "No image"
                 })
                 .ToList();
 

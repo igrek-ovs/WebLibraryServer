@@ -59,7 +59,6 @@ namespace testWabApi1.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        [Consumes("multipart/form-data")]
         public IActionResult CreateBook([FromBody] Book bookCreate)
         {
             if (bookCreate == null)
@@ -99,12 +98,8 @@ namespace testWabApi1.Controllers
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
             var imgPath = await _blobService.UploadBlobAsync(file);
-            // bookRepository.UpdateImagePath(bookCreate.Id, imgPath.ToString());
             return Ok(imgPath);
         }
-
-
-
 
         [HttpPut("{bookId}")]
         [ProducesResponseType(400)]
