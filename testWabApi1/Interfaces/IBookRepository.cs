@@ -5,14 +5,15 @@ namespace testWabApi1.Interfaces
 {
     public interface IBookRepository
     {
-        ICollection<BookDto> GetBooks();
-        ICollection<BookDto> GetBooksOnPage(int page);
-        bool CreateBook(Book book);
-        bool UpdateBook(int bookId, Book book);
-        bool DeleteBook(Book book);
-        int CalculateBooks();
-        Book GetBook(int id);
-        bool Save();
-        void UpdateImagePath(int bookId, string imagePath);
+        Task<ICollection<BookDto>> GetBooks();
+        Task<ICollection<BookDto>> GetBooksOnPage(int page);
+        Task<bool> CreateBook(Book book);
+        Task<bool> UpdateBook(int bookId, Book book);
+        Task<bool> DeleteBook(Book book);
+        Task<int> CalculateBooks();
+        Task<Book> GetBook(int id);
+        Task<bool> Save();
+        Task UpdateImagePath(int bookId, string imagePath);
+        Task<bool> IsBookExist(string title);
     }
 }

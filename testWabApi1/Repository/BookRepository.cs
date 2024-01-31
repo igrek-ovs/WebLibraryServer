@@ -15,9 +15,9 @@ namespace testWabApi1.Repository
             _libraryDbContext = context;
         }
 
-        public ICollection<BookDto> GetBooks()
+        public async Task<ICollection<BookDto>> GetBooks()
         {
-            var books = _libraryDbContext.Books
+            var books = await _libraryDbContext.Books
         .Include(b => b.Author)
         .Select(b => new BookDto
         {
@@ -28,47 +28,40 @@ namespace testWabApi1.Repository
             AuthorName = b.Author != null ? b.Author.Name : "Unknown Author",
             ImagePath = b.ImagePath != null ? b.ImagePath : "No image"
         })
-        .ToList();
+        .ToListAsync();
 
             return books;
         }
 
-        public bool CreateBook(Book book)
+        public async Task<bool> CreateBook(Book book)
         {
-            _libraryDbContext.Add(book);
-            return Save();
+            await _libraryDbContext.AddAsync(book);
+            return await Save();
         }
 
-        public bool Save()
+        public async Task<bool> Save()
         {
-            var saved = _libraryDbContext.SaveChanges();
+            var saved = await _libraryDbContext.SaveChangesAsync();
             return saved > 0 ? true : false;
         }
 
-        public bool UpdateBook(int bookId, Book book)
+        public async Task<bool> UpdateBook(int bookId, Book book)
         {
-            var existingBook = _libraryDbContext.Books.Include(b => b.Author).FirstOrDefault(b => b.Id == bookId);
+            var existingBook = await _libraryDbContext.Books.Include(b => b.Author).FirstOrDefaultAsync(b => b.Id == bookId);
             if (book.AuthorId > 0)
             {
-                var existingAuthor = _libraryDbContext.Authors.Find(book.AuthorId);
-
-                if (existingAuthor != null)
-                {
-                    existingBook.Author = existingAuthor;
-                }
-                else
-                {
-                    Console.WriteLine("Author not found");
-                }
+                var existingAuthor = await _libraryDbContext.Authors.FindAsync(book.AuthorId);
+                existingBook.Author = existingAuthor;
             }
+
             existingBook.Title = book.Title;
             existingBook.Genre = book.Genre;
             existingBook.ImagePath = book.ImagePath;
-            return Save();
+            return await Save();
         }
-        public bool DeleteBook(Book book)
+        public async Task<bool> DeleteBook(Book book)
         {
-            var existingBook = _libraryDbContext.Books.FirstOrDefault(b => b.Id == book.Id);
+            var existingBook = await _libraryDbContext.Books.FirstOrDefaultAsync(b => b.Id == book.Id);
 
             if (existingBook == null)
             {
@@ -76,16 +69,19 @@ namespace testWabApi1.Repository
             }
 
             _libraryDbContext.Books.Remove(existingBook);
-            return Save();
+            return await Save();
         }
 
-        public Book GetBook(int id) => _libraryDbContext.Books.FirstOrDefault(b => b.Id == id);
+        public async Task<Book> GetBook(int id)
+        {
+            return await _libraryDbContext.Books.FirstOrDefaultAsync(b => b.Id == id);
+        }
 
-        public ICollection<BookDto> GetBooksOnPage(int page)
+        public async Task<ICollection<BookDto>> GetBooksOnPage(int page)
         {
             int pageSize = 3;
 
-            var books = _libraryDbContext.Books
+            var books =await _libraryDbContext.Books
                 .Include(b => b.Author)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -98,25 +94,30 @@ namespace testWabApi1.Repository
                     AuthorName = b.Author != null ? b.Author.Name : "Unknown Author",
                     ImagePath = b.ImagePath != null ? b.ImagePath : "No image"
                 })
-                .ToList();
+                .ToListAsync();
 
             return books;
         }
 
-        public int CalculateBooks()
+        public async Task<int> CalculateBooks()
         {
-            return _libraryDbContext.Books.Count();
+            return await _libraryDbContext.Books.CountAsync();
         }
 
-        public void UpdateImagePath(int bookId, string imagePath)
+        public async Task UpdateImagePath(int bookId, string imagePath)
         {
-            var book = _libraryDbContext.Books.FirstOrDefault(b => b.Id == bookId);
+            var book = await _libraryDbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId);
 
             if (book != null)
             {
                 book.ImagePath = imagePath;
-                _libraryDbContext.SaveChanges();
+                await _libraryDbContext.SaveChangesAsync();
             }
+        }
+
+        public async Task<bool> IsBookExist(string title)
+        {
+            return await _libraryDbContext.Books.AnyAsync(b => b.Title.ToUpper().Trim() == title.ToUpper().Trim());   
         }
     }
 }

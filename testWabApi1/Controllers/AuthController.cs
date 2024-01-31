@@ -62,7 +62,7 @@ namespace testWabApi1.Controllers
             {
                 return Ok(response);
             }
-            return Unauthorized("Go and authorize one more time");
+            return Unauthorized("Token is not valid");
         }
     }
 }

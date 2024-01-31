@@ -34,7 +34,7 @@ namespace testWabApi1.Services
             return blobClient.Uri.ToString();
         }
 
-        public void DeleteBlobAsync(int bookId)
+        public async Task<bool> DeleteBlobAsync(int bookId)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
 
@@ -42,7 +42,7 @@ namespace testWabApi1.Services
 
             var blobClient = containerClient.GetBlobClient(fileName);
 
-            blobClient.DeleteIfExistsAsync();
+            return await blobClient.DeleteIfExistsAsync();
         }
     }
 }

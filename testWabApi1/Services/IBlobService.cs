@@ -3,6 +3,6 @@
     public interface IBlobService
     {
         Task<string> UploadBlobAsync(/*int bookId,*/ IFormFile file);
-        void DeleteBlobAsync(int bookId);
+        Task<bool> DeleteBlobAsync(int bookId);
     }
 }

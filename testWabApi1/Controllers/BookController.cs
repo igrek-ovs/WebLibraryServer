@@ -19,36 +19,29 @@ namespace testWabApi1.Controllers
             this.bookRepository = bookRepository;
             _blobService = blobService;
         }
+
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Book>))]
-        public IActionResult GetBooks()
+        public async Task<IActionResult> GetBooks()
         {
-            var books = bookRepository.GetBooks();
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var books = await bookRepository.GetBooks();
             return Ok(books);
         }
 
         [HttpGet("GetBooksOnPage/{pageNumber}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Book>))]
-        public IActionResult GetBooksOnPage(int pageNumber)
+        public async Task<IActionResult> GetBooksOnPage(int pageNumber)
         {
-            var books = bookRepository.GetBooksOnPage(pageNumber);
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var books = await bookRepository.GetBooksOnPage(pageNumber);
             return Ok(books);
         }
 
         [HttpGet("GetNumberOfPages")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult GetNumberOfPages()
+        public async Task<IActionResult> GetNumberOfPages()
         {
-            int totalBooks = bookRepository.CalculateBooks();
+            int totalBooks = await bookRepository.CalculateBooks();
 
             int totalPages = (int)Math.Ceiling((double)totalBooks / 3);
 
@@ -56,44 +49,31 @@ namespace testWabApi1.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public IActionResult CreateBook([FromBody] Book bookCreate)
+        public async Task<IActionResult> CreateBook([FromBody] Book bookCreate)
         {
             if (bookCreate == null)
             {
                 return BadRequest(ModelState);
             }
 
-            var book = bookRepository.GetBooks()
-                .Where(b => b.Title.Trim().ToUpper() == bookCreate.Title.TrimEnd().ToUpper())
-                .FirstOrDefault();
+            var flag = await bookRepository.IsBookExist(bookCreate.Title);
 
-            if (book != null)
+            if (!flag)
             {
-                ModelState.AddModelError("", "Book exists elready");
-                return StatusCode(422, ModelState);
+                
+                return BadRequest("Book already exists");
             }
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-
-            if (!bookRepository.CreateBook(bookCreate))
-            {
-                ModelState.AddModelError("", "Smth went wrong");
-                return StatusCode(500, ModelState);
-            }
+            await bookRepository.CreateBook(bookCreate);
 
             return Ok(bookCreate);
         }
 
         [HttpPost("upload-image")]
         [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
             var imgPath = await _blobService.UploadBlobAsync(file);
@@ -102,67 +82,35 @@ namespace testWabApi1.Controllers
 
         [HttpPut("{bookId}")]
         [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
-        public IActionResult UpdateBook(int bookId, [FromBody] Book bookUpdate)
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> UpdateBook(int bookId, [FromBody] Book bookUpdate)
         {
-            if (bookUpdate == null)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (bookId != bookUpdate.Id)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (!bookRepository.UpdateBook(bookId, bookUpdate))
-            {
-                ModelState.AddModelError("", "Smth went wrong");
-                return StatusCode(500, ModelState);
-            }
-            return NoContent();
+            var update = await bookRepository.UpdateBook(bookId, bookUpdate);
+            return Ok(update);
         }
+
         [Authorize]
         [HttpDelete("{bookId}")]
         [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
-        public IActionResult DeleteBook(int bookId)
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> DeleteBook(int bookId)
         {
-            var bookToDelte = bookRepository.GetBook(bookId);
+            var bookToDelete = await bookRepository.GetBook(bookId);
 
-            if (bookToDelte == null)
-                return BadRequest(ModelState);
-            if (!ModelState.IsValid)
+            if (bookToDelete == null)
             {
-                return BadRequest(ModelState);
+                return BadRequest("Book doesnt exist");
             }
 
-            if (!bookRepository.DeleteBook(bookToDelte))
-            {
-                ModelState.AddModelError("", "Smth went wrong");
-                return StatusCode(500, ModelState);
-
-            }
-            return Ok("Deleted");
+            var delete = await bookRepository.DeleteBook(bookToDelete);
+            return Ok(delete);
         }
-
 
         [HttpGet("{bookId}")]
         [ProducesResponseType(200, Type = typeof(Book))]
-        public IActionResult GetBook(int bookId)
+        public async Task<IActionResult> GetBook(int bookId)
         {
-            var book = bookRepository.GetBook(bookId);
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var book = await bookRepository.GetBook(bookId);
             return Ok(book);
         }
 
