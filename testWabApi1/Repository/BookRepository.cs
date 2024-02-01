@@ -119,5 +119,18 @@ namespace testWabApi1.Repository
         {
             return await _libraryDbContext.Books.AnyAsync(b => b.Title.ToUpper().Trim() == title.ToUpper().Trim());   
         }
+
+        public async Task<ICollection<AuthorDto>> GetAuthors()
+        {
+            var authors = await _libraryDbContext.Authors
+            .Select(b => new AuthorDto
+            {
+                Id = b.Id,
+                Name = b.Name
+            })
+            .ToListAsync();
+
+            return authors;
+        }
     }
 }

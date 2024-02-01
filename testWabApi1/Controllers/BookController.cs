@@ -28,6 +28,14 @@ namespace testWabApi1.Controllers
             return Ok(books);
         }
 
+        [HttpGet("get-authors")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Book>))]
+        public async Task<IActionResult> GetAuthors()
+        {
+            var authors = await bookRepository.GetAuthors();
+            return Ok(authors);
+        }
+
         [HttpGet("GetBooksOnPage/{pageNumber}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Book>))]
         public async Task<IActionResult> GetBooksOnPage(int pageNumber)
@@ -60,9 +68,8 @@ namespace testWabApi1.Controllers
 
             var flag = await bookRepository.IsBookExist(bookCreate.Title);
 
-            if (!flag)
+            if (flag)
             {
-                
                 return BadRequest("Book already exists");
             }
 
@@ -85,6 +92,7 @@ namespace testWabApi1.Controllers
         [ProducesResponseType(200)]
         public async Task<IActionResult> UpdateBook(int bookId, [FromBody] Book bookUpdate)
         {
+            await _blobService.DeleteBlobAsync(bookId);
             var update = await bookRepository.UpdateBook(bookId, bookUpdate);
             return Ok(update);
         }

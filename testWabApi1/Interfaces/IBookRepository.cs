@@ -15,5 +15,6 @@ namespace testWabApi1.Interfaces
         Task<bool> Save();
         Task UpdateImagePath(int bookId, string imagePath);
         Task<bool> IsBookExist(string title);
+        Task<ICollection<AuthorDto>> GetAuthors();
     }
 }
