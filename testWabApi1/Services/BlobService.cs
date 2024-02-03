@@ -8,15 +8,13 @@ namespace testWabApi1.Services
     {
         private readonly BlobServiceClient _blobServiceClient;
         private readonly string _containerName;
-        private readonly IBookRepository _bookRepository;
         private readonly string _blobUrl = "https://librarystor.blob.core.windows.net/bookpictures-cont/";
 
-        public BlobService(IConfiguration configuration, IBookRepository bookRepository)
+        public BlobService(IConfiguration configuration)
         {
             string connectionString = configuration.GetConnectionString("BlobStorageConnection");
             _blobServiceClient = new BlobServiceClient(connectionString);
             _containerName = configuration["BlobStorage:ContainerName"];
-            _bookRepository = bookRepository;
         }
 
         public async Task<string> UploadBlobAsync(IFormFile file)
@@ -29,12 +27,12 @@ namespace testWabApi1.Services
             }
 
             var uniqueFileName = $"{Guid.NewGuid()}{file.FileName}";
+            
             var blobClient = containerClient.GetBlobClient(uniqueFileName);
 
-            using (var stream = file.OpenReadStream())
-            {
-                await blobClient.UploadAsync(stream, false);
-            }
+            await using var stream = file.OpenReadStream();
+            
+            await blobClient.UploadAsync(stream, false);
 
             return blobClient.Uri.ToString();
         }

@@ -5,7 +5,7 @@ using testWabApi1.Services;
 
 namespace testWabApi1.Controllers
 {
-    [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -23,6 +23,7 @@ namespace testWabApi1.Controllers
             {
                 return Ok("Registered");
             }
+            
             return BadRequest("Smth went wrong during registration");
 
         }
@@ -30,22 +31,21 @@ namespace testWabApi1.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginUser loginUser)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             if (await _authService.Login(loginUser))
             {
                 var tokenString = _authService.GenerateTokenString(loginUser);
+                
                 var refreshToken = _authService.GenerateRefreshToken(loginUser);
+                
                 var tokensResponse = new TokensResponse
                 {
                     AccessToken = tokenString,
                     RefreshToken = refreshToken
                 };
+                
                 return Ok(tokensResponse);
             }
+            
             return BadRequest();
         }
 
@@ -56,12 +56,14 @@ namespace testWabApi1.Controllers
             {
                 return BadRequest(ModelState);
             }
+            
             var response = _authService.RefreshAccessToken(refreshToken);
 
             if (response != null)
             {
                 return Ok(response);
             }
+            
             return Unauthorized("Token is not valid");
         }
     }

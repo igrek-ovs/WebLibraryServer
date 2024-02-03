@@ -26,8 +26,8 @@ namespace testWabApi1.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, loginUser.UserName),
-                new Claim(ClaimTypes.Role, "Admin")
+                new(ClaimTypes.Email, loginUser.UserName),
+                new(ClaimTypes.Role, "Admin")
             };
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("Jwt:Key").Value));
@@ -43,12 +43,14 @@ namespace testWabApi1.Services
                 );
 
             string tokenString = new JwtSecurityTokenHandler().WriteToken(securityToken);
+            
             return tokenString;
         }
 
         public async Task<bool> Login(LoginUser loginUser)
         {
             var identityUser = await _userManager.FindByEmailAsync(loginUser.UserName);
+            
             if (identityUser == null)
             {
                 return false;
@@ -59,7 +61,7 @@ namespace testWabApi1.Services
         public RefreshToken GenerateRefreshToken(LoginUser loginUser)
         {
             var identityUser = _userManager.FindByEmailAsync(loginUser.UserName);
-            Console.WriteLine(identityUser.Id);
+
             var refreshToken = new RefreshToken
             {
                 Token = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(64)),
@@ -69,6 +71,7 @@ namespace testWabApi1.Services
             };
 
             _refreshTokenManager.RemoveRefreshToken(refreshToken.UserId);
+            
             _refreshTokenManager.AddRefreshToken(refreshToken);
 
             return refreshToken;
@@ -81,24 +84,30 @@ namespace testWabApi1.Services
                 UserName = loginUser.UserName,
                 Email = loginUser.UserName
             };
+            
             var result = await _userManager.CreateAsync(identityUser, loginUser.Password);
+            
             return result.Succeeded;
         }
 
         public string RefreshAccessToken(RefreshTokenDto refreshToken)
         {
             var savedToken = _refreshTokenManager.GetRefreshTokenByUserId(refreshToken.UserId);
+            
             if (savedToken.Token != refreshToken.Token)
                 return null;
+            
             if (savedToken.Expires < DateTime.Now)
                 return null;
 
             var identityUser = _userManager.FindByIdAsync(refreshToken.UserId).Result;
+            
             var user = new LoginUser
             {
                 UserName = identityUser.UserName,
                 Password = ""
             };
+            
             return GenerateTokenString(user);
         }
     }

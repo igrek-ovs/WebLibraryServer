@@ -8,8 +8,8 @@ namespace testWabApi1.Repository
 {
     public class BookRepository : IBookRepository
     {
-
         private readonly LibraryDbContext _libraryDbContext;
+        
         public BookRepository(LibraryDbContext context)
         {
             _libraryDbContext = context;
@@ -36,18 +36,20 @@ namespace testWabApi1.Repository
         public async Task<bool> CreateBook(Book book)
         {
             await _libraryDbContext.AddAsync(book);
+            
             return await Save();
         }
 
         public async Task<bool> Save()
         {
             var saved = await _libraryDbContext.SaveChangesAsync();
-            return saved > 0 ? true : false;
+            return saved > 0;
         }
 
         public async Task<bool> UpdateBook(int bookId, Book book)
         {
             var existingBook = await _libraryDbContext.Books.Include(b => b.Author).FirstOrDefaultAsync(b => b.Id == bookId);
+            
             if (book.AuthorId > 0)
             {
                 var existingAuthor = await _libraryDbContext.Authors.FindAsync(book.AuthorId);
@@ -57,8 +59,10 @@ namespace testWabApi1.Repository
             existingBook.Title = book.Title;
             existingBook.Genre = book.Genre;
             existingBook.ImagePath = book.ImagePath;
+            
             return await Save();
         }
+       
         public async Task<bool> DeleteBook(Book book)
         {
             var existingBook = await _libraryDbContext.Books.FirstOrDefaultAsync(b => b.Id == book.Id);
@@ -69,6 +73,7 @@ namespace testWabApi1.Repository
             }
 
             _libraryDbContext.Books.Remove(existingBook);
+            
             return await Save();
         }
 

@@ -16,6 +16,7 @@ namespace testWabApi1.Repository
         public void AddRefreshToken(RefreshToken refreshToken)
         {
             _dbContext.RefreshTokens.Add(refreshToken);
+            
             _dbContext.SaveChanges();
         }
 
@@ -26,6 +27,7 @@ namespace testWabApi1.Repository
             if (token != null)
             {
                 _dbContext.RefreshTokens.Remove(token);
+                
                 _dbContext.SaveChanges();
             }
         }

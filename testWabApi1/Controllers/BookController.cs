@@ -6,7 +6,7 @@ using testWabApi1.Services;
 
 namespace testWabApi1.Controllers
 {
-    [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     //[Authorize]
     public class BookController : Controller
@@ -93,8 +93,11 @@ namespace testWabApi1.Controllers
         public async Task<IActionResult> UpdateBook(int bookId, [FromBody] Book bookUpdate)
         {
             var book = await bookRepository.GetBook(bookId);
+            
             await _blobService.DeleteBlobAsync(book.ImagePath);
+            
             var update = await bookRepository.UpdateBook(bookId, bookUpdate);
+            
             return Ok(update);
         }
 
@@ -112,7 +115,9 @@ namespace testWabApi1.Controllers
             }
 
             var delete = await bookRepository.DeleteBook(bookToDelete);
+            
             await _blobService.DeleteBlobAsync(bookToDelete.ImagePath);
+            
             return Ok(delete);
         }
 
