@@ -40,7 +40,7 @@ namespace testWabApi1.Repository
             return await Save();
         }
 
-        public async Task<bool> Save()
+        private async Task<bool> Save()
         {
             var saved = await _libraryDbContext.SaveChangesAsync();
             return saved > 0;

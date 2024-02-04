@@ -18,9 +18,7 @@ namespace testWabApi1.Interfaces
         Task<int> CalculateBooks();
         
         Task<Book> GetBook(int id);
-        
-        Task<bool> Save();
-        
+                
         Task UpdateImagePath(int bookId, string imagePath);
         
         Task<bool> IsBookExist(string title);

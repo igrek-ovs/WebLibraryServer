@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using testWabApi1.Data;
 using testWabApi1.DTO;
 using testWabApi1.Interfaces;
 using testWabApi1.Models;
@@ -14,12 +16,14 @@ namespace testWabApi1.Services
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _config;
         private readonly IRefreshTokenRepository _refreshTokenManager;
+        private readonly LibraryDbContext _libraryDbContext;
 
-        public AuthService(UserManager<IdentityUser> userManager, IConfiguration config, IRefreshTokenRepository refreshTokenManager)
+        public AuthService(UserManager<IdentityUser> userManager, IConfiguration config, IRefreshTokenRepository refreshTokenManager, LibraryDbContext libraryDbContext)
         {
             _userManager = userManager;
             _config = config;
             _refreshTokenManager = refreshTokenManager;
+            _libraryDbContext = libraryDbContext;
         }
 
         public string GenerateTokenString(LoginUser loginUser)
@@ -43,14 +47,14 @@ namespace testWabApi1.Services
                 );
 
             string tokenString = new JwtSecurityTokenHandler().WriteToken(securityToken);
-            
+
             return tokenString;
         }
 
         public async Task<bool> Login(LoginUser loginUser)
         {
             var identityUser = await _userManager.FindByEmailAsync(loginUser.UserName);
-            
+
             if (identityUser == null)
             {
                 return false;
@@ -71,7 +75,7 @@ namespace testWabApi1.Services
             };
 
             _refreshTokenManager.RemoveRefreshToken(refreshToken.UserId);
-            
+
             _refreshTokenManager.AddRefreshToken(refreshToken);
 
             return refreshToken;
@@ -84,31 +88,68 @@ namespace testWabApi1.Services
                 UserName = loginUser.UserName,
                 Email = loginUser.UserName
             };
-            
+
             var result = await _userManager.CreateAsync(identityUser, loginUser.Password);
-            
+
             return result.Succeeded;
         }
 
         public string RefreshAccessToken(RefreshTokenDto refreshToken)
         {
             var savedToken = _refreshTokenManager.GetRefreshTokenByUserId(refreshToken.UserId);
-            
+
             if (savedToken.Token != refreshToken.Token)
                 return null;
-            
+
             if (savedToken.Expires < DateTime.Now)
                 return null;
 
             var identityUser = _userManager.FindByIdAsync(refreshToken.UserId).Result;
-            
+
             var user = new LoginUser
             {
                 UserName = identityUser.UserName,
                 Password = ""
             };
-            
+
             return GenerateTokenString(user);
+        }
+
+        public async Task<bool> AddAvatarToUser(string userId, string imagePath)
+        {
+            var userAvatar = new UserAvatars
+            {
+                UserId = userId,
+                ImagePath = imagePath
+            };
+            await _libraryDbContext.AddAsync(userAvatar);
+            return await Save();
+
+        }
+
+        public async Task<string> GetAvatarOfUser(string userId)
+        {
+            var userAvatar = await _libraryDbContext.UserAvatars.Where(u=> u.UserId == userId).FirstOrDefaultAsync();
+            return userAvatar?.ImagePath;
+        }
+
+        public async Task<bool> DeleteAvatarOfUser(string userId)
+        {
+            var userAvatar = await _libraryDbContext.UserAvatars.Where(u => u.UserId == userId).FirstOrDefaultAsync();
+            _libraryDbContext.UserAvatars.Remove(userAvatar);
+            return await Save();
+        }
+
+        public async Task<string> GetUserName(string userId)
+        {
+            var identityUser = await _userManager.FindByIdAsync(userId);
+            return identityUser.UserName;
+        }
+
+        private async Task<bool> Save()
+        {
+            var saved = await _libraryDbContext.SaveChangesAsync();
+            return saved > 0;
         }
     }
 }

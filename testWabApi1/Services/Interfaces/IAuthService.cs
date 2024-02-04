@@ -14,5 +14,13 @@ namespace testWabApi1.Services
         RefreshToken GenerateRefreshToken(LoginUser loginUser);
         
         string RefreshAccessToken(RefreshTokenDto refreshToken);
+
+        Task<bool> AddAvatarToUser(string userId, string imagePath);
+
+        Task<string> GetAvatarOfUser(string userId);
+
+        Task<bool> DeleteAvatarOfUser(string userId);
+
+        Task<string> GetUserName(string userId);
     }
 }

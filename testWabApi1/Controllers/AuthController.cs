@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using testWabApi1.DTO;
 using testWabApi1.Models;
 using testWabApi1.Services;
@@ -51,12 +52,7 @@ namespace testWabApi1.Controllers
 
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh(RefreshTokenDto refreshToken)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            
+        {            
             var response = _authService.RefreshAccessToken(refreshToken);
 
             if (response != null)
@@ -65,6 +61,38 @@ namespace testWabApi1.Controllers
             }
             
             return Unauthorized("Token is not valid");
+        }
+
+        [Authorize]
+        [HttpPost("add-avatar/{userId}")]
+        public async Task<IActionResult> AddAvatarToUser([FromBody] string imagePath, string userId)
+        {
+            var response = await _authService.AddAvatarToUser(userId, imagePath);
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpGet("get-user-avatar/{userId}")]
+        public async Task<IActionResult> GetUserAvatar (string userId)
+        {
+            var response = await _authService.GetAvatarOfUser(userId);
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpDelete("delete-user-avatar/{userId}")]
+        public async Task<IActionResult> DeleteUserAvatar(string userId)
+        {
+            var response = await _authService.DeleteAvatarOfUser(userId);
+            return Ok(response);
+        }
+
+        //[Authorize]
+        [HttpGet("get-user-name/{userId}")]
+        public async Task<IActionResult> GetUserName(string userId)
+        {
+            var response = await _authService.GetUserName(userId);
+            return Ok(response);
         }
     }
 }
