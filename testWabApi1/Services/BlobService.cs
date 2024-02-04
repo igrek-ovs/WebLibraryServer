@@ -41,6 +41,9 @@ namespace testWabApi1.Services
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
 
+            if (imagePath == null)
+                return false;
+
             var fileName = imagePath.Replace(_blobUrl, "");
 
             var blobClient = containerClient.GetBlobClient(fileName);

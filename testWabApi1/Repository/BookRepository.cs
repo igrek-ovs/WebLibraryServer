@@ -137,5 +137,24 @@ namespace testWabApi1.Repository
 
             return authors;
         }
+
+        public async Task<ICollection<BookDto>> GetBooksByName(string title)
+        {
+            var books = await _libraryDbContext.Books
+        .Include(b => b.Author)
+        .Where(b=> EF.Functions.Like(b.Title, $"%{title}%"))
+        .Select(b => new BookDto
+        {
+            Id = b.Id,
+            Title = b.Title,
+            Genre = b.Genre,
+            AuthorId = b.AuthorId,
+            AuthorName = b.Author != null ? b.Author.Name : "Unknown Author",
+            ImagePath = b.ImagePath != null ? b.ImagePath : "No image"
+        })
+        .ToListAsync();
+
+            return books;
+        }
     }
 }

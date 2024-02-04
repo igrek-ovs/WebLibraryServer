@@ -26,5 +26,7 @@ namespace testWabApi1.Interfaces
         Task<bool> IsBookExist(string title);
         
         Task<ICollection<AuthorDto>> GetAuthors();
+
+        Task<ICollection<BookDto>> GetBooksByName(string title);
     }
 }

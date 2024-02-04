@@ -129,6 +129,13 @@ namespace testWabApi1.Controllers
             return Ok(book);
         }
 
+        [HttpGet("get-book-by-name/{title}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Book>))]
+        public async Task<IActionResult> GetBooksByName(string title)
+        {
+            var books = await bookRepository.GetBooksByName(title);
+            return Ok(books);
+        }
     }
 
 }
