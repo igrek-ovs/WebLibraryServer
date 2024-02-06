@@ -14,6 +14,9 @@ namespace testWabApi1.Data
         public DbSet<Author> Authors { get; set; }
         
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+
         public DbSet<UserAvatars> UserAvatars { get; set; }
+
+        public DbSet<BookRating> BookRatings { get; set; }
     }
 }
