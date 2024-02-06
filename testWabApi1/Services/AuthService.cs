@@ -17,13 +17,15 @@ namespace testWabApi1.Services
         private readonly IConfiguration _config;
         private readonly IRefreshTokenRepository _refreshTokenManager;
         private readonly LibraryDbContext _libraryDbContext;
+        private readonly IBlobService _blobService;
 
-        public AuthService(UserManager<IdentityUser> userManager, IConfiguration config, IRefreshTokenRepository refreshTokenManager, LibraryDbContext libraryDbContext)
+        public AuthService(UserManager<IdentityUser> userManager, IConfiguration config, IRefreshTokenRepository refreshTokenManager, LibraryDbContext libraryDbContext, IBlobService blobService)
         {
             _userManager = userManager;
             _config = config;
             _refreshTokenManager = refreshTokenManager;
             _libraryDbContext = libraryDbContext;
+            _blobService = blobService;
         }
 
         public string GenerateTokenString(LoginUser loginUser)
@@ -136,6 +138,11 @@ namespace testWabApi1.Services
         public async Task<bool> DeleteAvatarOfUser(string userId)
         {
             var userAvatar = await _libraryDbContext.UserAvatars.Where(u => u.UserId == userId).FirstOrDefaultAsync();
+            if(userAvatar==null)
+            {
+                return false;
+            }
+            await _blobService.DeleteBlobAsync(userAvatar.ImagePath);
             _libraryDbContext.UserAvatars.Remove(userAvatar);
             return await Save();
         }

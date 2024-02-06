@@ -63,15 +63,15 @@ namespace testWabApi1.Controllers
             return Unauthorized("Token is not valid");
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost("add-avatar/{userId}")]
-        public async Task<IActionResult> AddAvatarToUser([FromBody] string imagePath, string userId)
+        public async Task<IActionResult> AddAvatarToUser( string userId,[FromBody] string imagePath)
         {
             var response = await _authService.AddAvatarToUser(userId, imagePath);
             return Ok(response);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("get-user-avatar/{userId}")]
         public async Task<IActionResult> GetUserAvatar (string userId)
         {
@@ -79,7 +79,7 @@ namespace testWabApi1.Controllers
             return Ok(response);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpDelete("delete-user-avatar/{userId}")]
         public async Task<IActionResult> DeleteUserAvatar(string userId)
         {
