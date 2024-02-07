@@ -18,5 +18,7 @@ namespace testWabApi1.Data
         public DbSet<UserAvatars> UserAvatars { get; set; }
 
         public DbSet<BookRating> BookRatings { get; set; }
+
+        public DbSet<BookComment> BookComments { get; set; }
     }
 }
