@@ -3,16 +3,19 @@ using testWabApi1.Data;
 using testWabApi1.DTO;
 using testWabApi1.Interfaces;
 using testWabApi1.Models;
+using testWabApi1.Services.Interfaces;
 
 namespace testWabApi1.Repository
 {
     public class BookRepository : IBookRepository
     {
         private readonly LibraryDbContext _libraryDbContext;
-        
-        public BookRepository(LibraryDbContext context)
+        private readonly IBookCommentService _bookCommentService;
+
+        public BookRepository(LibraryDbContext context, IBookCommentService bookCommentService)
         {
             _libraryDbContext = context;
+            _bookCommentService = bookCommentService;
         }
 
         public async Task<ICollection<BookDto>> GetBooks()
@@ -72,6 +75,7 @@ namespace testWabApi1.Repository
                 return false;
             }
 
+            await _bookCommentService.RemoveCommentsOfBook(existingBook.Id);
             _libraryDbContext.Books.Remove(existingBook);
             
             return await Save();

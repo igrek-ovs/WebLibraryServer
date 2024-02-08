@@ -20,6 +20,16 @@ namespace testWabApi1.Services
             await _libraryDbContext.SaveChangesAsync();
         }
 
+        public async Task RemoveCommentsOfBook(int bookId)
+        {
+            var commentsToRemove = await _libraryDbContext.BookComments
+                .Where(c => c.BookId == bookId)
+                .ToListAsync();
+
+            _libraryDbContext.BookComments.RemoveRange(commentsToRemove);
+            await _libraryDbContext.SaveChangesAsync();
+        }
+
         public async Task<ICollection<BookComment>> GetAllCommentsForBook(int bookId)
         {
             var comments = await _libraryDbContext.BookComments.Where(b => b.BookId == bookId).ToListAsync();
