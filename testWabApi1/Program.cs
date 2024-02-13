@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Stripe;
+using System.Configuration;
 using System.Text;
 using testWabApi1.Data;
 using testWabApi1.Interfaces;
@@ -18,6 +20,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddCors();
+
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -57,6 +61,8 @@ builder.Services.AddScoped<IBlobService, BlobService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBookRatingService, BookRatingService>();
 builder.Services.AddScoped<IBookCommentService, BookCommentService>();
+builder.Services.AddSingleton<CustomerService>();
+builder.Services.AddSingleton<ChargeService>();
 
 builder.Services.AddIdentityCore<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
         .AddEntityFrameworkStores<LibraryDbContext>();
@@ -79,6 +85,8 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = false;
 });
 
+
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe")); 
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

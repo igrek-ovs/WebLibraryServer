@@ -20,5 +20,7 @@ namespace testWabApi1.Data
         public DbSet<BookRating> BookRatings { get; set; }
 
         public DbSet<BookComment> BookComments { get; set; }
+
+        public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
     }
 }
