@@ -65,7 +65,7 @@ namespace testWabApi1.Controllers
                         var transaction = new PaymentTransaction
                         {
                             PaymentIntentId = charge.PaymentIntentId,
-                            Amount = charge.Amount / 100
+                            Amount = charge.Amount / 100,
                             Currency = charge.Currency,
                             PaymentDate = DateTime.UtcNow
                         };
