@@ -49,11 +49,11 @@ jobs:
 
       - name: Publish .NET Project
         run: |
-          dotnet publish "testWabApi1/testWabApi1.csproj" --configuration "Release" --output "out"
+          dotnet publish "testWabApi1/testWabApi1.csproj" --configuration "Release" --output src/LibraryServer
 
       - name: Deploy
         run: |
-          cd out
+          cd src/LibraryServer
           zip -r library-artifact.zip
           ls -l
 
