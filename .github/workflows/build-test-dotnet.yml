@@ -69,4 +69,4 @@ jobs:
           inlineScript: |
             ls -l
             cd src/LibraryService
-            az webapp deployment source config-zip --resource-group "library-rg" --src "library-artifact.zip" --name "library-api-igrek"
+            az webapp deployment source config-zip --resource-group "library-rg" --src ./library-artifact.zip --name "library-api-igrek"
