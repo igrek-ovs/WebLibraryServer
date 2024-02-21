@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Fetch Sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Setup .NET 7.0 SDK
         uses: actions/setup-dotnet@v3
@@ -49,11 +49,11 @@ jobs:
 
       - name: Publish .NET Project
         run: |
-          dotnet publish "testWabApi1/testWabApi1.csproj" --configuration "Release" --output src/LibraryServer
+          dotnet publish "testWabApi1/testWabApi1.csproj" -c Release -o src/LibraryService
 
       - name: Create zip archive
         run: |
-          cd src/LibraryServer
+          cd src/LibraryService
           zip -r library-artifact.zip
           ls -l
 
@@ -68,5 +68,5 @@ jobs:
           azcliversion: 2.57.0
           inlineScript: |
             ls -l
-            cd out
+            cd src/LibraryService
             az webapp deployment source config-zip --resource-group "library-rg" --src "library-artifact.zip" --name "library-api-igrek"
