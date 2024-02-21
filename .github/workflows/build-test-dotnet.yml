@@ -54,7 +54,7 @@ jobs:
       - name: Create zip archive
         run: |
           cd src/LibraryService
-          zip -r library-artifact.zip
+          zip -r library-artifact.zip .
           ls -l
 
       - name: Azure sign in
