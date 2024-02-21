@@ -27,12 +27,12 @@ jobs:
 
     steps:
       - name: Fetch Sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      - name: Setup .NET 8.0 SDK
+      - name: Setup .NET 7.0 SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 7.0.x
 
       - name: NuGet Cache
         uses: actions/cache@v3
@@ -45,14 +45,28 @@ jobs:
 
       - name: Build .NET Project
         run: |
-          dotnet build --no-restore /p:ContinuousIntegrationBuild=true --configuration Release
+          dotnet build --configuration Release
 
       - name: Publish .NET Project
         run: |
-          dotnet publish "testWabApi1/testWabApi1.csproj" --configuration "Release" --output "publish"
+          dotnet publish "testWabApi1/testWabApi1.csproj" -c Release -o src/LibraryService
 
-      - name: Drop Artifact
-        uses: actions/upload-artifact@v3
+      - name: Create zip archive
+        run: |
+          cd src/LibraryService
+          zip -r library-artifact.zip .
+          ls -l
+
+      - name: Azure sign in
+        uses: azure/login@v1
+        with: 
+          creds: ${{ secrets.SP_CREDENTIALS }}
+
+      - name: Azure CLI Deploy
+        uses: azure/CLI@v1
         with:
-          name: 'drop'
-          path: 'publish'
+          azcliversion: 2.57.0
+          inlineScript: |
+            ls -l
+            cd src/LibraryService
+            az webapp deployment source config-zip --resource-group "library-rg" --src ./library-artifact.zip --name "library-api-igrek"
