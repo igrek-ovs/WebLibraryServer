@@ -45,13 +45,13 @@ jobs:
 
       - name: Build .NET Project
         run: |
-          dotnet build --no-restore /p:ContinuousIntegrationBuild=true --configuration Release
+          dotnet build --configuration Release
 
       - name: Publish .NET Project
         run: |
           dotnet publish "testWabApi1/testWabApi1.csproj" --configuration "Release" --output src/LibraryServer
 
-      - name: Deploy
+      - name: Create zip archive
         run: |
           cd src/LibraryServer
           zip -r library-artifact.zip
@@ -62,7 +62,7 @@ jobs:
         with: 
           creds: ${{ secrets.SP_CREDENTIALS }}
 
-      - name: Azure CLI deployment
+      - name: Azure CLI Deploy
         uses: azure/CLI@v1
         with:
           azcliversion: 2.57.0
