@@ -29,10 +29,10 @@ jobs:
       - name: Fetch Sources
         uses: actions/checkout@v3
 
-      - name: Setup .NET 8.0 SDK
+      - name: Setup .NET 7.0 SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 7.0.x
 
       - name: NuGet Cache
         uses: actions/cache@v3
@@ -49,10 +49,23 @@ jobs:
 
       - name: Publish .NET Project
         run: |
-          dotnet publish "testWabApi1/testWabApi1.csproj" --configuration "Release" --output "publish"
+          dotnet publish "testWabApi1/testWabApi1.csproj" --configuration "Release" --output "out"
 
-      - name: Drop Artifact
-        uses: actions/upload-artifact@v3
+      - name: Deploy
+        run: |
+          cd out
+          zip -r library-artifact.zip
+          ls -l
+
+      - name: Azure sign in
+        uses: azure/login@latest
+        with: ${{ secrets.SP_CREDENTIALS }}
+
+      - name: Azure CLI deployment
+        uses: azure/CLI@latest
         with:
-          name: 'drop'
-          path: 'publish'
+          azcliversion: 2.57.0
+          inlineScript: |
+            ls -l
+            cd out
+            az webapp deployment source config-zip --resource-group "library-rg" --src "library-artifact.zip" --name "library-api-igrek"
