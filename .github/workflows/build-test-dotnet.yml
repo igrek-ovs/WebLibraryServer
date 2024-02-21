@@ -58,7 +58,7 @@ jobs:
           ls -l
 
       - name: Azure sign in
-        uses: azure/login@latest
+        uses: azure/login@2.30.0
         with: ${{ secrets.SP_CREDENTIALS }}
 
       - name: Azure CLI deployment
