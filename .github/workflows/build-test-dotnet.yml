@@ -59,7 +59,8 @@ jobs:
 
       - name: Azure sign in
         uses: azure/login@v1
-        with: ${{ secrets.SP_CREDENTIALS }}
+        with: 
+          creds: ${{ secrets.SP_CREDENTIALS }}
 
       - name: Azure CLI deployment
         uses: azure/CLI@v1
