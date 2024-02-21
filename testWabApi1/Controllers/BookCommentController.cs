@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using testWabApi1.Models;
-using testWabApi1.Services;
 using testWabApi1.Services.Interfaces;
 
 namespace testWabApi1.Controllers
@@ -11,7 +10,7 @@ namespace testWabApi1.Controllers
     {
         private readonly IBookCommentService _bookCommentService;
 
-        public BookCommentController(IBookCommentService bookService) 
+        public BookCommentController(IBookCommentService bookService)
         {
             _bookCommentService = bookService;
         }

@@ -39,7 +39,7 @@ namespace testWabApi1.Repository
         public async Task<bool> CreateBook(Book book)
         {
             await _libraryDbContext.AddAsync(book);
-            
+
             return await Save();
         }
 
@@ -52,7 +52,7 @@ namespace testWabApi1.Repository
         public async Task<bool> UpdateBook(int bookId, Book book)
         {
             var existingBook = await _libraryDbContext.Books.Include(b => b.Author).FirstOrDefaultAsync(b => b.Id == bookId);
-            
+
             if (book.AuthorId > 0)
             {
                 var existingAuthor = await _libraryDbContext.Authors.FindAsync(book.AuthorId);
@@ -62,10 +62,10 @@ namespace testWabApi1.Repository
             existingBook.Title = book.Title;
             existingBook.Genre = book.Genre;
             existingBook.ImagePath = book.ImagePath;
-            
+
             return await Save();
         }
-       
+
         public async Task<bool> DeleteBook(Book book)
         {
             var existingBook = await _libraryDbContext.Books.FirstOrDefaultAsync(b => b.Id == book.Id);
@@ -77,7 +77,7 @@ namespace testWabApi1.Repository
 
             await _bookCommentService.RemoveCommentsOfBook(existingBook.Id);
             _libraryDbContext.Books.Remove(existingBook);
-            
+
             return await Save();
         }
 
@@ -90,7 +90,7 @@ namespace testWabApi1.Repository
         {
             int pageSize = 3;
 
-            var books =await _libraryDbContext.Books
+            var books = await _libraryDbContext.Books
                 .Include(b => b.Author)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -126,7 +126,7 @@ namespace testWabApi1.Repository
 
         public async Task<bool> IsBookExist(string title)
         {
-            return await _libraryDbContext.Books.AnyAsync(b => b.Title.ToUpper().Trim() == title.ToUpper().Trim());   
+            return await _libraryDbContext.Books.AnyAsync(b => b.Title.ToUpper().Trim() == title.ToUpper().Trim());
         }
 
         public async Task<ICollection<AuthorDto>> GetAuthors()
@@ -146,7 +146,7 @@ namespace testWabApi1.Repository
         {
             var books = await _libraryDbContext.Books
         .Include(b => b.Author)
-        .Where(b=> EF.Functions.Like(b.Title, $"%{title}%"))
+        .Where(b => EF.Functions.Like(b.Title, $"%{title}%"))
         .Select(b => new BookDto
         {
             Id = b.Id,

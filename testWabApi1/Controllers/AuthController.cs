@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using testWabApi1.DTO;
 using testWabApi1.Models;
 using testWabApi1.Services;
@@ -24,7 +23,7 @@ namespace testWabApi1.Controllers
             {
                 return Ok("Registered");
             }
-            
+
             return BadRequest("Smth went wrong during registration");
 
         }
@@ -35,37 +34,37 @@ namespace testWabApi1.Controllers
             if (await _authService.Login(loginUser))
             {
                 var tokenString = _authService.GenerateTokenString(loginUser);
-                
+
                 var refreshToken = _authService.GenerateRefreshToken(loginUser);
-                
+
                 var tokensResponse = new TokensResponse
                 {
                     AccessToken = tokenString,
                     RefreshToken = refreshToken
                 };
-                
+
                 return Ok(tokensResponse);
             }
-            
+
             return BadRequest();
         }
 
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh(RefreshTokenDto refreshToken)
-        {            
+        {
             var response = _authService.RefreshAccessToken(refreshToken);
 
             if (response != null)
             {
                 return Ok(response);
             }
-            
+
             return Unauthorized("Token is not valid");
         }
 
         //[Authorize]
         [HttpPost("add-avatar/{userId}")]
-        public async Task<IActionResult> AddAvatarToUser( string userId,[FromBody] string imagePath)
+        public async Task<IActionResult> AddAvatarToUser(string userId, [FromBody] string imagePath)
         {
             var response = await _authService.AddAvatarToUser(userId, imagePath);
             return Ok(response);
@@ -73,7 +72,7 @@ namespace testWabApi1.Controllers
 
         //[Authorize]
         [HttpGet("get-user-avatar/{userId}")]
-        public async Task<IActionResult> GetUserAvatar (string userId)
+        public async Task<IActionResult> GetUserAvatar(string userId)
         {
             var response = await _authService.GetAvatarOfUser(userId);
             return Ok(response);

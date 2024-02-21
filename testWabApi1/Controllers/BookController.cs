@@ -93,11 +93,11 @@ namespace testWabApi1.Controllers
         public async Task<IActionResult> UpdateBook(int bookId, [FromBody] Book bookUpdate)
         {
             var book = await bookRepository.GetBook(bookId);
-            
+
             await _blobService.DeleteBlobAsync(book.ImagePath);
-            
+
             var update = await bookRepository.UpdateBook(bookId, bookUpdate);
-            
+
             return Ok(update);
         }
 
@@ -115,9 +115,9 @@ namespace testWabApi1.Controllers
             }
 
             var delete = await bookRepository.DeleteBook(bookToDelete);
-            
+
             await _blobService.DeleteBlobAsync(bookToDelete.ImagePath);
-            
+
             return Ok(delete);
         }
 

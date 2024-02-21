@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Stripe;
-using System.Configuration;
 using System.Text;
 using testWabApi1.Data;
 using testWabApi1.Interfaces;
@@ -86,7 +85,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 
-builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe")); 
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

@@ -2,6 +2,6 @@
 {
     public class PaymentRequest
     {
-       public string PaymentMethodId { get; set; }
+        public string PaymentMethodId { get; set; }
     }
 }

@@ -131,14 +131,14 @@ namespace testWabApi1.Services
 
         public async Task<string> GetAvatarOfUser(string userId)
         {
-            var userAvatar = await _libraryDbContext.UserAvatars.Where(u=> u.UserId == userId).FirstOrDefaultAsync();
+            var userAvatar = await _libraryDbContext.UserAvatars.Where(u => u.UserId == userId).FirstOrDefaultAsync();
             return userAvatar?.ImagePath;
         }
 
         public async Task<bool> DeleteAvatarOfUser(string userId)
         {
             var userAvatar = await _libraryDbContext.UserAvatars.Where(u => u.UserId == userId).FirstOrDefaultAsync();
-            if(userAvatar==null)
+            if (userAvatar == null)
             {
                 return false;
             }

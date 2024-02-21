@@ -1,6 +1,4 @@
 ﻿using Azure.Storage.Blobs;
-using testWabApi1.Interfaces;
-using static System.Net.WebRequestMethods;
 
 namespace testWabApi1.Services
 {
@@ -27,11 +25,11 @@ namespace testWabApi1.Services
             }
 
             var uniqueFileName = $"{Guid.NewGuid()}{file.FileName}";
-            
+
             var blobClient = containerClient.GetBlobClient(uniqueFileName);
 
             await using var stream = file.OpenReadStream();
-            
+
             await blobClient.UploadAsync(stream, false);
 
             return blobClient.Uri.ToString();
